@@ -1,5 +1,11 @@
 package algorithm
 
-class Algorithm {
+import tsp.models.{Instance, Solution}
+
+trait Algorithm {
+
+  val instance: Instance
+
+  def solve(): Solution
 
 }

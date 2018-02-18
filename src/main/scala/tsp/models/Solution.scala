@@ -28,14 +28,6 @@ final class Solution (
     path(position) = vertex
   }
 
-  def evaluate(): Double = {
-    objective = 0
-    (0 until path.length - 1).foreach { position: Int =>
-      objective += instance.distance(path(position), path(position + 1))
-    }
-    objective
-  }
-
   def isFeasible(): Boolean = {
     var feasible: Boolean = path(0) == path(path.length - 1)
     val occurrences: Array[Int] = Array.ofDim[Int](instance.nVertices)
@@ -48,12 +40,49 @@ final class Solution (
     feasible
   }
 
+  def distance(fromPosition: Int, toPosition: Int): Double = {
+    if (fromPosition < 0 || fromPosition >= path.length || toPosition < 0 || toPosition >= path.length)
+      logError(
+        s"Failed to get distance between vertices at positions $fromPosition and $toPosition",
+        new IllegalArgumentException
+      )
+
+    instance.distance(path(fromPosition), path(toPosition))
+  }
+
+  private def tour(fromPosition: Int, toPosition: Int): Double = {
+    var tour: Double = 0d
+    (fromPosition until toPosition).foreach { position: Int =>
+      tour += instance.distance(path(position), path(position + 1))
+    }
+    tour
+  }
+
   def tourObjective(): Double = {
+    objective = tour(0, path.length - 1)
     logInfo(
       s"Tour objective found: $objective"
     )
 
     objective
+  }
+
+  def reversePath(fromPosition: Int, toPosition: Int): Unit = {
+    if (fromPosition < 0 || fromPosition >= path.length || toPosition < 0 || toPosition >= path.length)
+      logError(
+        s"Failed to reverse between positions $fromPosition and $toPosition",
+        new IllegalArgumentException
+      )
+
+    var i: Int = fromPosition
+    var j: Int = toPosition
+    while (i < j) {
+      val vertex: Vertex = path(i)
+      path(i) = path(j)
+      path(j) = vertex
+      i += 1
+      j -= 1
+    }
   }
 
 }

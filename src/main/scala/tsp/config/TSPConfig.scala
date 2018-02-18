@@ -8,6 +8,6 @@ object TSPConfig {
 
   val FileDirectory: String = Config.getString("runtime.filedirectory")
 
-  val TimeLimit: Int = Config.getInt("runtime.timelimit")
+  val TimeLimit: Long = Config.getLong("runtime.timelimit")
 
 }

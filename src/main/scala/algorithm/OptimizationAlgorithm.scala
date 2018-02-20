@@ -3,8 +3,11 @@ import tsp.models.Solution
 
 trait OptimizationAlgorithm extends Algorithm {
 
-  var nIterations: Int = 0
+  protected var solutionIsImproving: Boolean = true
 
-  val solution: Solution
+  protected val solution: Solution
+
+  def hasNextIteration(): Boolean =
+    solutionIsImproving
 
 }

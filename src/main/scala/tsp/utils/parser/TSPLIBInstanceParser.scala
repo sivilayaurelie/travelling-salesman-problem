@@ -45,7 +45,7 @@ object TSPLIBInstanceParser extends InstanceParser with Logger {
     var index: Int = 0
     line = bufferedReader.readLine()
     while (index < vertices.length && line != null && !line.startsWith("EOF")) {
-      val coordinates: Array[String] = line.split(" ")
+      val coordinates: Array[String] = line.trim().split("\\s+")
       vertices(index) = Vertex(index, coordinates(0).toInt, coordinates(1).toDouble, coordinates(2).toDouble)
       index += 1
       line = bufferedReader.readLine()

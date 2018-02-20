@@ -1,11 +1,11 @@
 package algorithm.constructive.heuristic
 
-import algorithm.Algorithm
+import algorithm.ConstructiveAlgorithm
 import algorithm.config.AlgorithmConfig
 import tsp.models.{Instance, Solution, Vertex}
 import tsp.utils.Logger
 
-class NearestNeighbour(override val instance: Instance) extends Algorithm with Logger {
+final class NearestNeighbour(override val instance: Instance) extends ConstructiveAlgorithm with Logger {
 
   val visitedVertices: Array[Int] = Array.ofDim[Int](instance.nVertices)
 
@@ -33,7 +33,7 @@ class NearestNeighbour(override val instance: Instance) extends Algorithm with L
       vertex = findNearestUnvisitedVertex(vertex)
     }
     solution.setVertexPositionInPath(initialVertex, solution.path.length - 1)
-    solution.evaluate()
+
     solution
   }
 

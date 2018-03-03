@@ -5,9 +5,11 @@ import algorithm.config.AlgorithmConfig
 import tsp.models.{Instance, Solution, Vertex}
 import tsp.utils.Logger
 
-final class NearestNeighbour(override val instance: Instance) extends ConstructiveAlgorithm with Logger {
+final class NearestNeighbour(
+  override val instance: Instance
+) extends ConstructiveAlgorithm with Logger {
 
-  val visitedVertices: Array[Int] = Array.ofDim[Int](instance.nVertices)
+  private val visitedVertices: Array[Int] = Array.ofDim[Int](instance.nVertices)
 
   private def findNearestUnvisitedVertex(vertex: Vertex): Vertex = {
     var minDistance: Double = Double.MaxValue
@@ -27,12 +29,11 @@ final class NearestNeighbour(override val instance: Instance) extends Constructi
     val solution = Solution(instance)
 
     var vertex: Vertex = initialVertex
-    (0 until solution.path.length - 1).foreach { position: Int =>
-      solution.setVertexPositionInPath(vertex, position)
+    (0 until solution.lastPosition()).foreach { position: Int =>
+      solution.setVertexPosition(vertex, position)
       visitedVertices(vertex.index) += 1
       vertex = findNearestUnvisitedVertex(vertex)
     }
-    solution.setVertexPositionInPath(initialVertex, solution.path.length - 1)
 
     solution
   }
@@ -46,7 +47,7 @@ final class NearestNeighbour(override val instance: Instance) extends Constructi
         new IllegalArgumentException
       )
 
-    val initialVertex: Vertex = instance.vertices(initialVertexIndex)
+    val initialVertex: Vertex = instance.vertex(initialVertexIndex)
     solve(initialVertex)
   }
 

@@ -2,7 +2,7 @@ package tsp
 
 import algorithm.{ConstructiveAlgorithm, OptimizationAlgorithm}
 import algorithm.constructive.heuristic.NearestNeighbour
-import algorithm.optimization.heuristic.PairwiseOptimization
+import algorithm.optimization.heuristic.{AntColonyOptimization, PairwiseOptimization}
 import tsp.config.TSPConfig
 import tsp.models.{Instance, Solution}
 import tsp.utils.Logger
@@ -41,7 +41,7 @@ object TSPSolver extends App with Logger {
   var solution: Solution = Try(Await.result(futureSolution, timelimit.millis)) match {
     case Success(s: Solution) =>
       buildingTime = System.currentTimeMillis() - startTime
-      timelimit -= buildingTime
+      timelimit -= System.currentTimeMillis() - startTime
       s
     case Failure(_) =>
       logError(s"Failed to build initial solution", new RuntimeException)
@@ -49,12 +49,13 @@ object TSPSolver extends App with Logger {
   }
 
   val initialObjective: Double = solution.tourObjective()
+  logInfo(s"Tour objective found: $initialObjective")
 
   logInfo(s"Building initial solution terminated after $buildingTime millis")
 
   logInfo(s"Improving solution ...")
 
-  val optimization: OptimizationAlgorithm = new PairwiseOptimization(solution)
+  val optimization: OptimizationAlgorithm = new AntColonyOptimization(solution)
 
   var nIterations: Int = 0
   var improvingTime: Long = 0l
@@ -65,7 +66,7 @@ object TSPSolver extends App with Logger {
       case Success(s: Solution) =>
         nIterations += 1
         improvingTime += System.currentTimeMillis() - startTime
-        timelimit -= improvingTime
+        timelimit -= System.currentTimeMillis() - startTime
         s
       case Failure(_) =>
         solution
@@ -73,6 +74,7 @@ object TSPSolver extends App with Logger {
   }
 
   val objective: Double = solution.tourObjective()
+  logInfo(s"Tour objective found: $objective")
 
   logInfo(s"Improving solution terminated after $improvingTime millis")
 

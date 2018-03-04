@@ -20,14 +20,13 @@ final class Instance(
   private val distances: Array[Array[Double]]
 ) extends Logger {
 
-  def distance(from: Vertex, to: Vertex): Double = {
-    if (from.index < 0 || from.index >= distances.length || to.index < 0 || to.index >= distances.length)
-      logError(
-        s"Failed to get distance between $from and $to",
-        new IllegalArgumentException
-      )
+  def vertex(vertexIndex: Int): Vertex =
+    vertices(vertexIndex)
 
+  def distance(fromIndex: Int, toIndex: Int): Double =
+    distances(fromIndex)(toIndex)
+
+  def distance(from: Vertex, to: Vertex): Double =
     distances(from.index)(to.index)
-  }
 
 }

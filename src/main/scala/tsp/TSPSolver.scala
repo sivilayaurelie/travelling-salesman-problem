@@ -2,7 +2,7 @@ package tsp
 
 import algorithm.{ConstructiveAlgorithm, OptimizationAlgorithm}
 import algorithm.constructive.heuristic.NearestNeighbour
-import algorithm.optimization.heuristic.PairwiseOptimization
+import algorithm.optimization.heuristic.{AntColonyOptimization, PairwiseOptimization}
 import tsp.config.TSPConfig
 import tsp.models.{Instance, Solution}
 import tsp.utils.Logger
@@ -19,8 +19,6 @@ object TSPSolver extends App with Logger {
 
   val instanceName: String = args(0)
 
-  val executionContext: ExecutionContextExecutor = ExecutionContext.global
-
   var timelimit: Long = TSPConfig.TimeLimit
 
   logInfo(s"$instanceName instance loading ...")
@@ -34,51 +32,26 @@ object TSPSolver extends App with Logger {
   logInfo(s"Building initial solution ...")
 
   val constructor: ConstructiveAlgorithm = new NearestNeighbour(instance)
-
-  val startTime: Long = System.currentTimeMillis()
-  var buildingTime: Long = 0l
-  val futureSolution: Future[Solution] = Future.apply(constructor.solve())(executionContext)
-  var solution: Solution = Try(Await.result(futureSolution, timelimit.millis)) match {
-    case Success(s: Solution) =>
-      buildingTime = System.currentTimeMillis() - startTime
-      timelimit -= buildingTime
-      s
-    case Failure(_) =>
-      logError(s"Failed to build initial solution", new RuntimeException)
-      throw new RuntimeException
-  }
+  var solution: Solution = constructor.solve(timelimit)
 
   val initialObjective: Double = solution.tourObjective()
+  logInfo(s"Tour objective found: $initialObjective")
 
-  logInfo(s"Building initial solution terminated after $buildingTime millis")
+  logInfo(s"Building initial solution terminated after ${constructor.runningTime} millis")
 
   logInfo(s"Improving solution ...")
 
-  val optimization: OptimizationAlgorithm = new PairwiseOptimization(solution)
-
-  var nIterations: Int = 0
-  var improvingTime: Long = 0l
-  while (optimization.hasNextIteration() && timelimit > 0l) {
-    var startTime: Long = System.currentTimeMillis()
-    val futureSolution: Future[Solution] = Future.apply(optimization.solve())(executionContext)
-    solution = Try(Await.result(futureSolution, timelimit.millis)) match {
-      case Success(s: Solution) =>
-        nIterations += 1
-        improvingTime += System.currentTimeMillis() - startTime
-        timelimit -= improvingTime
-        s
-      case Failure(_) =>
-        solution
-    }
-  }
+  val optimization: OptimizationAlgorithm = new AntColonyOptimization(solution)
+  solution = optimization.solve(timelimit - constructor.runningTime)
 
   val objective: Double = solution.tourObjective()
+  logInfo(s"Tour objective found: $objective")
 
-  logInfo(s"Improving solution terminated after $improvingTime millis")
+  logInfo(s"Improving solution terminated after ${optimization.runningTime} millis")
 
   logInfo(s"$instanceName instance solving succeeded")
 
   val objectiveVariation: Double = (initialObjective - objective) / initialObjective * 100
-  logInfo(s"Solution improved by $objectiveVariation% after $nIterations iterations")
+  logInfo(s"Solution improved by $objectiveVariation% after ${optimization.nIterations} iterations")
 
 }

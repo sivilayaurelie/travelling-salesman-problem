@@ -20,7 +20,4 @@ final class Colony(
   val ants: Array[Ant]
 ) {
 
-  def ant(antIndex: Int): Ant =
-    ants(antIndex)
-
 }

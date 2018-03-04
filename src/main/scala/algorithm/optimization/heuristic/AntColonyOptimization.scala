@@ -10,11 +10,11 @@ final class AntColonyOptimization(
   override val solution: Solution
 ) extends OptimizationAlgorithm with Logger {
 
-  val nAnts: Int = AlgorithmConfig.NAnts
+  private val nAnts: Int = AlgorithmConfig.NAnts
 
-  val referenceObjective: Double = solution.tourObjective()
-  val tau: Double = 1d / (referenceObjective * instance.nVertices)
-  val networkParams = NetworkParams(
+  private val referenceObjective: Double = solution.tourObjective()
+  private val tau: Double = 1d / (referenceObjective * instance.nVertices)
+  private val networkParams = NetworkParams(
     AlgorithmConfig.Alpha,
     AlgorithmConfig.Beta,
     AlgorithmConfig.Epsilon,
@@ -23,32 +23,31 @@ final class AntColonyOptimization(
     tau
   )
 
-  val network: Network = Network.initialize(
+  private val network: Network = Network.initialize(
     instance,
     nAnts,
     networkParams
   )
 
-  var bestAnt: Ant = Ant(solution)
+  private var bestAnt: Ant = Ant(solution)
 
-  val currentSolution: Solution = Solution(instance)
-  currentSolution.setPath(solution.getPath())
+  private val iterationSolution: Solution = Solution(instance)
+  iterationSolution.setPath(solution.getPath())
 
-  def updateCurrentSolution(): Unit = {
+  private def updateIterationSolution(): Unit = {
     network.colony.ants.foreach { ant: Ant =>
-      if (ant.tourObjective() < currentSolution.tourObjective())
-        currentSolution.setPath(ant.getPath())
+      if (ant.solution.tourObjective() < iterationSolution.tourObjective())
+        iterationSolution.setPath(ant.solution.getPath())
     }
   }
 
-  def updateSolution(): Unit = {
-    if (currentSolution.tourObjective() < solution.tourObjective()) {
-      solution.setPath(currentSolution.getPath())
-      bestAnt = Ant(currentSolution)
+  private def updateSolution(): Unit = {
+    if (iterationSolution.tourObjective() < solution.tourObjective()) {
+      solution.setPath(iterationSolution.getPath())
     }
   }
 
-  def buildSolutions(): Unit = {
+  private def buildSolutions(): Unit = {
     network.memorizePheromoneTrails()
     network.memorizeAttrativePaths()
 
@@ -72,7 +71,7 @@ final class AntColonyOptimization(
     }
   }
 
-  def updatePheromoneTrails(): Unit = {
+  private def updatePheromoneTrails(): Unit = {
     network.reinitializePheromoneTrails()
     network.reinitializeAttrativePaths()
 
@@ -83,16 +82,12 @@ final class AntColonyOptimization(
     bestAnt.depositePheromones(network, networkParams.rho, 1d / solution.tourObjective())
   }
 
-  def iterate(): Solution = {
+  override def improve(): Solution = {
     buildSolutions()
-    updateCurrentSolution()
+    updateIterationSolution()
     updateSolution()
     updatePheromoneTrails()
     solution
-  }
-
-  override def solve(): Solution = {
-    iterate()
   }
 
 }

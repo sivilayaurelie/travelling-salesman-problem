@@ -1,6 +1,6 @@
 package algorithm.optimization.heuristic.model
 
-import tsp.models.{Instance, Solution, Vertex}
+import tsp.models.{Instance, Vertex}
 
 object Network {
 

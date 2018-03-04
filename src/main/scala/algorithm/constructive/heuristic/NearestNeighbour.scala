@@ -25,7 +25,7 @@ final class NearestNeighbour(
     nearestUnvisitedVertex
   }
 
-  private def solve(initialVertex: Vertex): Solution = {
+  private def build(initialVertex: Vertex): Solution = {
     val solution = Solution(instance)
 
     var vertex: Vertex = initialVertex
@@ -38,7 +38,7 @@ final class NearestNeighbour(
     solution
   }
 
-  override def solve(): Solution = {
+  override def build(): Solution = {
     val initialVertexIndex: Int = AlgorithmConfig.InitialVertexIndex
 
     if (initialVertexIndex < 0 || initialVertexIndex >= instance.nVertices)
@@ -48,7 +48,7 @@ final class NearestNeighbour(
       )
 
     val initialVertex: Vertex = instance.vertex(initialVertexIndex)
-    solve(initialVertex)
+    build(initialVertex)
   }
 
 }

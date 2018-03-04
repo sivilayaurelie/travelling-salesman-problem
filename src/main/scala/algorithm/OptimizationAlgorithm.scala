@@ -1,15 +1,38 @@
 package algorithm
 import tsp.models.{Instance, Solution}
+import tsp.utils.Logger
 
-trait OptimizationAlgorithm extends Algorithm {
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
+import scala.util.{Failure, Success, Try}
 
-  protected val solution: Solution
+trait OptimizationAlgorithm extends Algorithm with Logger {
 
-  protected val instance: Instance = solution.instance
+  var nIterations: Int = 0
 
   protected var solutionIsImproving: Boolean = true
 
-  def hasNextIteration(): Boolean =
-    solutionIsImproving
+  protected val solution: Solution
+
+  protected def improve(): Solution
+
+  override val instance: Instance = solution.instance
+
+  override def solve(timelimit: Long): Solution = {
+    var iterationTimelimit: Long = timelimit
+    while (solutionIsImproving && iterationTimelimit > 0l) {
+      val startTime: Long = System.currentTimeMillis()
+      val futureSolution: Future[Solution] = Future.apply(improve())(executionContext)
+      Try(Await.result(futureSolution, iterationTimelimit.millis)) match {
+        case Success(_) =>
+          nIterations += 1
+          runningTime += System.currentTimeMillis() - startTime
+          iterationTimelimit -= System.currentTimeMillis() - startTime
+        case Failure(_) =>
+          ()
+      }
+    }
+    solution
+  }
 
 }

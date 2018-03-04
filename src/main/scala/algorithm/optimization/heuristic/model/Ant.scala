@@ -21,17 +21,11 @@ final class Ant(
   private val visitedVertices: Array[Int]
 ) {
 
-  def getPath(): Array[Vertex] =
-    solution.getPath()
-
   def getVertexAtPosition(position: Int): Vertex =
     solution.getVertexAtPosition(position)
 
   def setVertexPositionInPath(vertex: Vertex, position: Int): Unit =
     solution.setVertexPosition(vertex, position)
-
-  def tourObjective(): Double =
-    solution.tourObjective()
 
   def clearVisitedVertices(): Unit = {
     visitedVertices.indices.foreach { index =>

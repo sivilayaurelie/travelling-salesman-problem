@@ -56,7 +56,7 @@ final class AntColonyOptimization(
       val randomVertexIndex: Int = (math.random * instance.nVertices).toInt
       val randomInitialVertex = instance.vertex(randomVertexIndex)
       ant.clearVisitedVertices()
-      ant.setVertexPositionInPath(randomInitialVertex, position)
+      ant.setVertexAtPosition(randomInitialVertex, position)
       ant.visitedVertex(randomInitialVertex)
     }
     position += 1

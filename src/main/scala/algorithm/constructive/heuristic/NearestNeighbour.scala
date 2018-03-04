@@ -30,7 +30,7 @@ final class NearestNeighbour(
 
     var vertex: Vertex = initialVertex
     (0 until solution.lastPosition()).foreach { position: Int =>
-      solution.setVertexPosition(vertex, position)
+      solution.setVertexAtPosition(vertex, position)
       visitedVertices(vertex.index) += 1
       vertex = findNearestUnvisitedVertex(vertex)
     }

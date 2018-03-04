@@ -24,7 +24,7 @@ final class Solution (
   def getVertexAtPosition(position: Int): Vertex =
     path(position)
 
-  def setVertexPosition(vertex: Vertex, position: Int): Unit = {
+  def setVertexAtPosition(vertex: Vertex, position: Int): Unit = {
     if (position == 0)
       path(path.length - 1) = vertex
     path(position) = vertex

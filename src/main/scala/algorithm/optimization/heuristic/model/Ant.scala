@@ -24,8 +24,8 @@ final class Ant(
   def getVertexAtPosition(position: Int): Vertex =
     solution.getVertexAtPosition(position)
 
-  def setVertexPositionInPath(vertex: Vertex, position: Int): Unit =
-    solution.setVertexPosition(vertex, position)
+  def setVertexAtPosition(vertex: Vertex, position: Int): Unit =
+    solution.setVertexAtPosition(vertex, position)
 
   def clearVisitedVertices(): Unit = {
     visitedVertices.indices.foreach { index =>
@@ -64,7 +64,7 @@ final class Ant(
       else
         current
     }
-    setVertexPositionInPath(nextVertex, position)
+    setVertexAtPosition(nextVertex, position)
     visitedVertex(nextVertex)
     nextVertex
   }
@@ -87,7 +87,7 @@ final class Ant(
     }
 
     val nextVertex: Vertex = solution.instance.vertex(nextVertexIndex)
-    setVertexPositionInPath(nextVertex, position)
+    setVertexAtPosition(nextVertex, position)
     visitedVertex(nextVertex)
     nextVertex
   }

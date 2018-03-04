@@ -19,8 +19,6 @@ object TSPSolver extends App with Logger {
 
   val instanceName: String = args(0)
 
-  val executionContext: ExecutionContextExecutor = ExecutionContext.global
-
   var timelimit: Long = TSPConfig.TimeLimit
 
   logInfo(s"$instanceName instance loading ...")

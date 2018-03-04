@@ -27,10 +27,10 @@ trait OptimizationAlgorithm extends Algorithm with Logger {
         case Success(_) =>
           nIterations += 1
           runningTime += System.currentTimeMillis() - startTime
-          iterationTimelimit -= System.currentTimeMillis() - startTime
         case Failure(_) =>
           ()
       }
+      iterationTimelimit -= System.currentTimeMillis() - startTime
     }
     solution
   }
